@@ -765,10 +765,10 @@
       "secret": "pl-client-dev-secret",
       "redirectUris": [
         "http://localhost:8002/oidc/callback/",
-        "http://d2:8000/oidc/callback/"
+        "http://pl:8000/oidc/callback/"
       ],
       "webOrigins": [
-        "http://d2:8000",
+        "http://pl:8000",
         "http://localhost:8002"
       ],
       "notBefore": 0,
@@ -782,7 +782,7 @@
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:8002/##http://d2:8000/",
+        "post.logout.redirect.uris": "http://localhost:8002/##http://pl:8000/",
         "client.session.max.lifespan": "28800",
         "client.session.idle.timeout": "28800"
       },

@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 
-SECRET_KEY = env('D2_SECRET_KEY')
+SECRET_KEY = env('PL_SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
@@ -55,11 +55,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
-    'default': env.db('D2_DATABASE_URL')
+    'default': env.db('PL_DATABASE_URL')
 }
 
 AUTHENTICATION_BACKENDS = [
-    'accounts.backends.D2OIDCBackend',
+    'accounts.backends.PoliciesOIDCBackend',
 ]
 
 # mozilla-django-oidc settings

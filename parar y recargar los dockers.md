@@ -1,5 +1,5 @@
 
-# 1. Bajar d2 y keycloak
+# 1. Bajar pl y keycloak
 cd ~/projects/keycloak/new2/keycloak-django-multiple-dockers/django && docker compose down
 cd ~/projects/keycloak/new2/keycloak-django-multiple-dockers/keycloak && docker compose down
 
@@ -14,8 +14,8 @@ docker rm -f sso-postgres-postgres-1 2>/dev/null; docker compose up -d
 cd ~/projects/keycloak/new2/keycloak-django-multiple-dockers/keycloak && docker rm -f sso-keycloak-keycloak-1 2>/dev/null; docker compose up -d
 # esperar "healthy" (~30s): docker compose ps
 
-# 5. Levantar d2
-cd ~/projects/keycloak/new2/keycloak-django-multiple-dockers/django && docker rm -f sso-d2-d2-1 2>/dev/null; docker compose up -d
+# 5. Levantar pl
+cd ~/projects/keycloak/new2/keycloak-django-multiple-dockers/django && docker rm -f sso-pl-pl-1 2>/dev/null; docker compose up -d
 
-# 6. Crear usuarios (ya incluyen los roles de d2)
-docker exec sso-d2-d2-1 python3 scripts/create_users.py
+# 6. Crear usuarios (ya incluyen los roles de pl)
+docker exec sso-pl-pl-1 python3 scripts/create_users.py

@@ -1,25 +1,25 @@
-name: sso-d2
+name: sso-pl
 
 networks:
   sso-network:
     external: true
 
 services:
-  d2:
+  pl:
     build: .
     command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.development
-      D2_SECRET_KEY: ${D2_SECRET_KEY}
-      D2_DATABASE_URL: postgres://d2_user:${D2_DB_PASSWORD}@postgres:5432/d2_db
+      PL_SECRET_KEY: ${PL_SECRET_KEY}
+      PL_DATABASE_URL: postgres://pl_user:${PL_DB_PASSWORD}@postgres:5432/pl_db
       KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL:-http://keycloak:8080}
       KEYCLOAK_PUBLIC_URL: ${KEYCLOAK_PUBLIC_URL:-http://localhost:8080}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM:-tools-realm}
       PL_OIDC_CLIENT_ID: ${PL_OIDC_CLIENT_ID:-pl-client}
       PL_OIDC_CLIENT_SECRET: ${PL_OIDC_CLIENT_SECRET}
-      D2_REDIRECT_URI: ${D2_REDIRECT_URI:-http://localhost:8002/oidc/callback/}
+      PL_REDIRECT_URI: ${PL_REDIRECT_URI:-http://localhost:8002/oidc/callback/}
     ports:
       - "8002:8000"
     healthcheck:

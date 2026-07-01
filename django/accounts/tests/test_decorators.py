@@ -19,7 +19,7 @@ def _ok_view(request):
 
 
 def test_require_groups_allows_user_with_matching_group(rf, db):
-    user = User.objects.create_user(username='grp-user-d2')
+    user = User.objects.create_user(username='grp-user-pl')
     g, _ = Group.objects.get_or_create(name='pl:viewer')
     user.groups.add(g)
     request = rf.get('/reports/')
@@ -28,7 +28,7 @@ def test_require_groups_allows_user_with_matching_group(rf, db):
 
 
 def test_require_groups_denies_user_without_group(rf, db):
-    user = User.objects.create_user(username='no-grp-d2')
+    user = User.objects.create_user(username='no-grp-pl')
     request = rf.get('/reports/')
     request.user = user
     response = require_groups(['pl:viewer'])(_ok_view)(request)

@@ -32,7 +32,7 @@ wait_healthy() {
     echo "  '$container' healthy (${waited}s)"
 }
 
-log "1. Bajando d2 y keycloak"
+log "1. Bajando pl y keycloak"
 (cd "$ROOT/django" && docker compose down)
 (cd "$ROOT/keycloak" && docker compose down)
 
@@ -49,12 +49,12 @@ docker rm -f sso-keycloak-keycloak-1 >/dev/null 2>&1 || true
 (cd "$ROOT/keycloak" && docker compose up -d)
 wait_healthy sso-keycloak-keycloak-1 90
 
-log "5. Levantando d2"
-docker rm -f sso-d2-d2-1 >/dev/null 2>&1 || true
+log "5. Levantando pl"
+docker rm -f sso-pl-pl-1 >/dev/null 2>&1 || true
 (cd "$ROOT/django" && docker compose up -d)
-wait_healthy sso-d2-d2-1 60
+wait_healthy sso-pl-pl-1 60
 
-log "6. Creando usuarios (ya incluyen los roles de d2)"
-docker exec sso-d2-d2-1 python3 scripts/create_users.py
+log "6. Creando usuarios (ya incluyen los roles de pl)"
+docker exec sso-pl-pl-1 python3 scripts/create_users.py
 
 log "Listo"
