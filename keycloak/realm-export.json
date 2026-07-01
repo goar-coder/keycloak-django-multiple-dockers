@@ -357,7 +357,7 @@
       "security-admin-console": [],
       "admin-cli": [],
       "account-console": [],
-      "d2-client": [
+      "pl-client": [
         {
           "id": "15a16d14-6a1f-4ab8-9d8d-95de6fbcbb86",
           "name": "auth_loginform",
@@ -756,13 +756,13 @@
     },
     {
       "id": "989f25f6-6840-44eb-9bd8-4e066e68468c",
-      "clientId": "d2-client",
-      "name": "D2 Scope Testing App",
+      "clientId": "pl-client",
+      "name": "Django client policies",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "d2-client-dev-secret",
+      "secret": "pl-client-dev-secret",
       "redirectUris": [
         "http://localhost:8002/oidc/callback/",
         "http://d2:8000/oidc/callback/"
@@ -1470,7 +1470,7 @@
     {
       "id": "e816ce61-53f3-4245-800d-dd70b9370f84",
       "alias": "Global Browser Flow",
-      "description": "Custom browser flow for d2-client",
+      "description": "Custom browser flow for pl-client",
       "providerId": "basic-flow",
       "topLevel": true,
       "builtIn": false,

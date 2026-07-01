@@ -67,8 +67,8 @@ AUTHENTICATION_BACKENDS = [
 # _KC_PUBLIC_BASE: public URL visible to the browser (redirects)
 _KC_BASE = f"{env('KEYCLOAK_SERVER_URL')}/realms/{env('KEYCLOAK_REALM')}/protocol/openid-connect"
 _KC_PUBLIC_BASE = f"{env('KEYCLOAK_PUBLIC_URL', default='http://localhost:8080')}/realms/{env('KEYCLOAK_REALM')}/protocol/openid-connect"
-OIDC_RP_CLIENT_ID = env('D2_OIDC_CLIENT_ID', default='d2-client')
-OIDC_RP_CLIENT_SECRET = env('D2_OIDC_CLIENT_SECRET')
+OIDC_RP_CLIENT_ID = env('PL_OIDC_CLIENT_ID', default='pl-client')
+OIDC_RP_CLIENT_SECRET = env('PL_OIDC_CLIENT_SECRET')
 OIDC_RP_SIGN_ALGO = 'RS256'
 OIDC_OP_JWKS_ENDPOINT = f"{_KC_BASE}/certs"
 OIDC_OP_AUTHORIZATION_ENDPOINT = f"{_KC_PUBLIC_BASE}/auth"
