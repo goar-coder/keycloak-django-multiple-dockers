@@ -9,7 +9,7 @@ logger = logging.getLogger('accounts')
 class D2OIDCBackend(OIDCAuthenticationBackend):
 
     def _sync_d2_groups(self, user, claims):
-        d2_group_names = [g for g in claims.get('groups', []) if g.startswith('d2:') or g.startswith('admin:')]
+        d2_group_names = [g for g in claims.get('groups', []) if g.startswith('pl:') or g.startswith('admin:')]
         django_groups = []
         for name in d2_group_names:
             group, _ = Group.objects.get_or_create(name=name)

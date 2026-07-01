@@ -15,46 +15,46 @@ def backend():
 
 def test_sync_d2_groups_assigns_auth_group(db, backend):
     user = User.objects.create_user(username='d2-user-001')
-    backend._sync_d2_groups(user, {'groups': ['d2:viewer']})
-    assert user.groups.filter(name='d2:viewer').exists()
+    backend._sync_d2_groups(user, {'groups': ['pl:viewer']})
+    assert user.groups.filter(name='pl:viewer').exists()
 
 
 def test_sync_d2_groups_ignores_d1_groups(db, backend):
     user = User.objects.create_user(username='d2-user-002')
-    backend._sync_d2_groups(user, {'groups': ['d1:admin', 'd2:editor']})
+    backend._sync_d2_groups(user, {'groups': ['d1:admin', 'pl:editor']})
     assert not user.groups.filter(name='d1:admin').exists()
-    assert user.groups.filter(name='d2:editor').exists()
+    assert user.groups.filter(name='pl:editor').exists()
 
 
 def test_sync_d2_groups_clears_removed_groups(db, backend):
     from django.contrib.auth.models import Group
     user = User.objects.create_user(username='d2-user-003')
-    g, _ = Group.objects.get_or_create(name='d2:viewer')
+    g, _ = Group.objects.get_or_create(name='pl:viewer')
     user.groups.add(g)
     backend._sync_d2_groups(user, {'groups': []})
-    assert not user.groups.filter(name='d2:viewer').exists()
+    assert not user.groups.filter(name='pl:viewer').exists()
 
 
 def test_sync_ignores_non_prefixed_groups(db, backend):
     user = User.objects.create_user(username='d2-user-004')
-    backend._sync_d2_groups(user, {'groups': ['team-a', 'ops', 'd2:admin']})
+    backend._sync_d2_groups(user, {'groups': ['team-a', 'ops', 'pl:admin']})
     assert not user.groups.filter(name='team-a').exists()
     assert not user.groups.filter(name='ops').exists()
-    assert user.groups.filter(name='d2:admin').exists()
+    assert user.groups.filter(name='pl:admin').exists()
 
 
 def test_create_user_syncs_d2_groups(db, backend):
     claims = {
         'sub': 'd2-new-001',
         'email': 'new@d2.com',
-        'groups': ['d2:admin'],
+        'groups': ['pl:admin'],
     }
     with patch.object(backend, 'get_userinfo', return_value=claims):
         user = backend.create_user(claims)
-    assert user.groups.filter(name='d2:admin').exists()
+    assert user.groups.filter(name='pl:admin').exists()
 
 
 def test_update_user_syncs_d2_groups(db, backend):
     user = User.objects.create_user(username='d2-update-001')
-    backend.update_user(user, {'groups': ['d2:editor']})
-    assert user.groups.filter(name='d2:editor').exists()
+    backend.update_user(user, {'groups': ['pl:editor']})
+    assert user.groups.filter(name='pl:editor').exists()

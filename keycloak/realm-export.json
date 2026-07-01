@@ -107,7 +107,34 @@
       {
         "id": "c112e55e-d219-4b72-ac26-fd5950fd5dae",
         "name": "auth_loginform",
-        "description": "Password-based authentication flow (realm-level)",
+        "description": "User and password authentication flow",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "ebd635ea-cbb6-4b37-a740-c912866507be",
+        "attributes": {}
+      },
+      {
+        "id": "a4d4a23e-b655-4f8a-b8ef-c16c024b2a27",
+        "name": "auth_autologin",
+        "description": "Magic-link passwordless authentication flow",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "ebd635ea-cbb6-4b37-a740-c912866507be",
+        "attributes": {}
+      },
+      {
+        "id": "d0876219-cc13-4a25-9b9d-57d41360aecf",
+        "name": "auth_entraid",
+        "description": "Microsoft Entra ID authentication flow",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "ebd635ea-cbb6-4b37-a740-c912866507be",
+        "attributes": {}
+      },
+      {
+        "id": "7450b520-672d-448b-bd82-ddc98a93431f",
+        "name": "access_policies_can_login",
+        "description": "Access to Polices client",
         "composite": false,
         "clientRole": false,
         "containerId": "ebd635ea-cbb6-4b37-a740-c912866507be",
@@ -350,14 +377,6 @@
           "attributes": {}
         },
         {
-          "id": "ea7c6593-17e3-454d-a2c7-8c734a92b7f6",
-          "name": "can-login",
-          "description": "Grants access to D2. Users without this role are denied at the identity-first screen.",
-          "composite": false,
-          "clientRole": true,
-          "containerId": "989f25f6-6840-44eb-9bd8-4e066e68468c"
-        },
-        {
           "id": "5b404460-8492-46ba-8685-1bdabf6a9692",
           "name": "auth_oidc",
           "description": "Generic OIDC-authenticated user role for D2",
@@ -479,8 +498,8 @@
     },
     {
       "id": "b59dff54-b1c6-46e2-af6d-839bef13c676",
-      "name": "d2:admin",
-      "path": "/d2:admin",
+      "name": "pl:admin",
+      "path": "/pl:admin",
       "subGroups": [],
       "attributes": {},
       "realmRoles": [],
@@ -488,8 +507,8 @@
     },
     {
       "id": "5bb2822a-42af-4ce4-b1ae-79cf029874cb",
-      "name": "d2:data",
-      "path": "/d2:data",
+      "name": "pl:data",
+      "path": "/pl:data",
       "subGroups": [],
       "attributes": {},
       "realmRoles": [],
@@ -497,8 +516,8 @@
     },
     {
       "id": "afc6fab1-0db8-4991-8410-35cb0ea1ceba",
-      "name": "d2:editor",
-      "path": "/d2:editor",
+      "name": "pl:editor",
+      "path": "/pl:editor",
       "subGroups": [],
       "attributes": {},
       "realmRoles": [],
@@ -506,8 +525,8 @@
     },
     {
       "id": "fc807d37-404d-45df-8978-022cdb1ed0c3",
-      "name": "d2:report",
-      "path": "/d2:report",
+      "name": "pl:report",
+      "path": "/pl:report",
       "subGroups": [],
       "attributes": {},
       "realmRoles": [],
@@ -515,8 +534,8 @@
     },
     {
       "id": "d7653799-d06d-4f9a-94e9-78317b7e7b08",
-      "name": "d2:viewer",
-      "path": "/d2:viewer",
+      "name": "pl:viewer",
+      "path": "/pl:viewer",
       "subGroups": [],
       "attributes": {},
       "realmRoles": [],
@@ -1450,7 +1469,7 @@
     },
     {
       "id": "e816ce61-53f3-4245-800d-dd70b9370f84",
-      "alias": "D2 Browser Flow",
+      "alias": "Global Browser Flow",
       "description": "Custom browser flow for d2-client",
       "providerId": "basic-flow",
       "topLevel": true,
@@ -1783,7 +1802,7 @@
         },
         {
           "authenticatorFlow": true,
-          "requirement": "REQUIRED",
+          "requirement": "CONDITIONAL",
           "priority": 20,
           "autheticatorFlow": true,
           "flowAlias": "d2-magic-link-continue",
@@ -2047,7 +2066,7 @@
     {
       "id": "e255d7e2-eee9-4d0b-a587-6c0f4c8ff3f3",
       "alias": "d2-client-role-check",
-      "description": "Denies access if the user does not have the d2-client can-login role.",
+      "description": "Denies access if the user does not have the access_policies_can_login realm role.",
       "providerId": "basic-flow",
       "topLevel": false,
       "builtIn": false,
@@ -2070,7 +2089,7 @@
     {
       "id": "269648e5-2f8a-41ae-9473-4609bfe947d3",
       "alias": "d2-magic-link-continue",
-      "description": "Magic link continuation flow for users with auth_loginform realm role",
+      "description": "Magic link continuation flow for users with auth_autologin realm role",
       "providerId": "basic-flow",
       "topLevel": false,
       "builtIn": false,
@@ -2114,7 +2133,7 @@
       "id": "43c74e48-9d50-44e2-a73c-adef506a7ccc",
       "alias": "d2-password-role-cfg",
       "config": {
-        "condUserRole": "d2-client.auth_loginform",
+        "condUserRole": "auth_loginform",
         "negate": "false"
       }
     },
@@ -2122,7 +2141,7 @@
       "id": "73932019-f7d6-49c1-9d86-959e7d5f925e",
       "alias": "d2-client-role-cfg",
       "config": {
-        "condUserRole": "d2-client.can-login",
+        "condUserRole": "access_policies_can_login",
         "negate": "true"
       }
     },
@@ -2130,7 +2149,7 @@
       "id": "632661f2-15a3-44ec-9dbf-7a86bc5486c2",
       "alias": "condition-aulogin-global-role",
       "config": {
-        "condUserRole": "auth_loginform",
+        "condUserRole": "auth_autologin",
         "negate": "false"
       }
     }

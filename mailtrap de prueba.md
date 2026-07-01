@@ -1,0 +1,1 @@
+https://mailtrap.io/sandboxes/4722658/settings

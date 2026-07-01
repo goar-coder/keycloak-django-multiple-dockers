@@ -10,7 +10,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['d2_groups'] = [g.name for g in self.request.user.groups.filter(name__startswith='d2:')]
+        ctx['pl_groups'] = [g.name for g in self.request.user.groups.filter(name__startswith='pl:')]
         return ctx
 
 
@@ -24,21 +24,21 @@ class GroupAccessDeniedView(LoginRequiredMixin, TemplateView):
         return ctx
 
 
-@method_decorator(require_groups(['d2:report']), name='dispatch')
+@method_decorator(require_groups(['pl:report']), name='dispatch')
 class ReportsView(LoginRequiredMixin, TemplateView):
     template_name = 'portal/reports.html'
 
 
-@method_decorator(require_groups(['d2:data', 'd2:admin', 'admin:data']), name='dispatch')
+@method_decorator(require_groups(['pl:data', 'pl:admin', 'admin:data']), name='dispatch')
 class DataView(LoginRequiredMixin, TemplateView):
     template_name = 'portal/data.html'
 
 
-@method_decorator(require_groups(['d2:editor', 'd2:admin']), name='dispatch')
+@method_decorator(require_groups(['pl:editor', 'pl:admin']), name='dispatch')
 class EditorView(LoginRequiredMixin, TemplateView):
     template_name = 'portal/editor.html'
 
 
-@method_decorator(require_groups(['d2:admin']), name='dispatch')
-class D2AdminView(LoginRequiredMixin, TemplateView):
+@method_decorator(require_groups(['pl:admin']), name='dispatch')
+class PoliciesAdminView(LoginRequiredMixin, TemplateView):
     template_name = 'portal/admin_section.html'

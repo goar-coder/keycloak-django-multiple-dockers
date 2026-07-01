@@ -27,26 +27,26 @@ def test_home_accessible_when_authenticated(db):
     assert _client_with_groups(db, []).get('/').status_code == 200
 
 
-def test_home_context_has_d2_groups(db):
-    c = _client_with_groups(db, ['d2:viewer'])
+def test_home_context_has_pl_groups(db):
+    c = _client_with_groups(db, ['pl:viewer'])
     resp = c.get('/')
-    assert 'd2:viewer' in resp.context['d2_groups']
+    assert 'pl:viewer' in resp.context['pl_groups']
 
 
-# --- ReportsView (requires d2:report) ---
+# --- ReportsView (requires pl:report) ---
 
 def test_reports_accessible_with_report_group(db):
-    assert _client_with_groups(db, ['d2:report']).get('/reports/').status_code == 200
+    assert _client_with_groups(db, ['pl:report']).get('/reports/').status_code == 200
 
 
 def test_reports_denied_for_viewer(db):
-    resp = _client_with_groups(db, ['d2:viewer']).get('/reports/')
+    resp = _client_with_groups(db, ['pl:viewer']).get('/reports/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
 
 def test_reports_denied_for_editor(db):
-    resp = _client_with_groups(db, ['d2:editor']).get('/reports/')
+    resp = _client_with_groups(db, ['pl:editor']).get('/reports/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
@@ -61,14 +61,14 @@ def test_reports_redirects_anonymous():
     assert Client().get('/reports/').status_code == 302
 
 
-# --- DataView (requires d2:data) ---
+# --- DataView (requires pl:data) ---
 
 def test_data_accessible_with_data_group(db):
-    assert _client_with_groups(db, ['d2:data']).get('/data/').status_code == 200
+    assert _client_with_groups(db, ['pl:data']).get('/data/').status_code == 200
 
 
-def test_data_accessible_with_d2_admin_group(db):
-    assert _client_with_groups(db, ['d2:admin']).get('/data/').status_code == 200
+def test_data_accessible_with_policies_admin_group(db):
+    assert _client_with_groups(db, ['pl:admin']).get('/data/').status_code == 200
 
 
 def test_data_accessible_with_admin_data_group(db):
@@ -76,13 +76,13 @@ def test_data_accessible_with_admin_data_group(db):
 
 
 def test_data_denied_for_viewer(db):
-    resp = _client_with_groups(db, ['d2:viewer']).get('/data/')
+    resp = _client_with_groups(db, ['pl:viewer']).get('/data/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
 
 def test_data_denied_for_editor(db):
-    resp = _client_with_groups(db, ['d2:editor']).get('/data/')
+    resp = _client_with_groups(db, ['pl:editor']).get('/data/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
@@ -97,23 +97,23 @@ def test_data_denied_without_group(db):
 
 def test_group_denied_shows_required_groups(db):
     c = _client_with_groups(db, [])
-    resp = c.get('/group-denied/?required=d2:editor,d2:admin')
+    resp = c.get('/group-denied/?required=pl:editor,pl:admin')
     assert resp.status_code == 200
-    assert 'd2:editor' in resp.context['required_groups']
+    assert 'pl:editor' in resp.context['required_groups']
 
 
-# --- EditorView (requires d2:editor or d2:admin) ---
+# --- EditorView (requires pl:editor or pl:admin) ---
 
 def test_editor_accessible_with_editor(db):
-    assert _client_with_groups(db, ['d2:editor']).get('/editor/').status_code == 200
+    assert _client_with_groups(db, ['pl:editor']).get('/editor/').status_code == 200
 
 
 def test_editor_accessible_with_admin(db):
-    assert _client_with_groups(db, ['d2:admin']).get('/editor/').status_code == 200
+    assert _client_with_groups(db, ['pl:admin']).get('/editor/').status_code == 200
 
 
 def test_editor_denied_for_viewer(db):
-    resp = _client_with_groups(db, ['d2:viewer']).get('/editor/')
+    resp = _client_with_groups(db, ['pl:viewer']).get('/editor/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
@@ -122,23 +122,23 @@ def test_editor_redirects_anonymous():
     assert Client().get('/editor/').status_code == 302
 
 
-# --- D2AdminView (requires d2:admin only) ---
+# --- PoliciesAdminView (requires pl:admin only) ---
 
-def test_d2admin_accessible_with_admin(db):
-    assert _client_with_groups(db, ['d2:admin']).get('/admin/').status_code == 200
+def test_policies_admin_accessible_with_admin(db):
+    assert _client_with_groups(db, ['pl:admin']).get('/admin/').status_code == 200
 
 
-def test_d2admin_denied_for_editor(db):
-    resp = _client_with_groups(db, ['d2:editor']).get('/admin/')
+def test_policies_admin_denied_for_editor(db):
+    resp = _client_with_groups(db, ['pl:editor']).get('/admin/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
 
-def test_d2admin_denied_for_viewer(db):
-    resp = _client_with_groups(db, ['d2:viewer']).get('/admin/')
+def test_policies_admin_denied_for_viewer(db):
+    resp = _client_with_groups(db, ['pl:viewer']).get('/admin/')
     assert resp.status_code == 302
     assert '/group-denied/' in resp['Location']
 
 
-def test_d2admin_redirects_anonymous():
+def test_policies_admin_redirects_anonymous():
     assert Client().get('/admin/').status_code == 302

@@ -4,7 +4,7 @@ Crea usuarios en Keycloak con contraseña, grupos y roles de cliente.
 Si el usuario ya existe lo actualiza (grupos y roles). Los grupos se
 crean automáticamente si no existen.
 
-Uso desde dentro del contenedor d2:
+Uso desde dentro del contenedor PL:
     python3 scripts/create_users.py
 
 Uso desde fuera (apuntando a localhost):
@@ -32,56 +32,50 @@ USERS = [
     {
         "username":     "testadmin",
         "password":     "testadmin123",
-        "groups":       ["d2:admin"],
-        "client_roles": {
-            "d2-client": ["auth_loginform", "can-login"],
-        },
+        "groups":       ["pl:admin"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
         "username":     "testuser_data",
         "password":     "testuser_data123",
-        "groups":       ["d2:data"],
-        "client_roles": {
-            "d2-client": ["auth_loginform", "can-login"],
-        },
+        "groups":       ["pl:data"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
         "username":     "user_admin_data",
         "password":     "user_admin_data123",
-        "groups":       ["d2:data"],
-        "client_roles": {
-            "d2-client": ["auth_loginform", "can-login"],
-        },
+        "groups":       ["pl:data"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
-        "username":     "d2_user_report",
-        "password":     "d2_user_report123",
-        "groups":       ["d2:report"],
-        "client_roles": {"d2-client": ["auth_loginform", "can-login"]},
+        "username":     "pl_user_report",
+        "password":     "pl_user_report123",
+        "groups":       ["pl:report"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
-        "username":     "d2_user_data",
-        "password":     "d2_user_data123",
-        "groups":       ["d2:data"],
-        "client_roles": {"d2-client": ["auth_loginform", "can-login"]},
+        "username":     "pl_user_data",
+        "password":     "pl_user_data123",
+        "groups":       ["pl:data"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
-        "username":     "d2_user_editor",
-        "password":     "d2_user_editor123",
-        "groups":       ["d2:editor"],
-        "client_roles": {"d2-client": ["auth_loginform", "can-login"]},
+        "username":     "pl_user_editor",
+        "password":     "pl_user_editor123",
+        "groups":       ["pl:editor"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
-        "username":     "d2_user_admin",
-        "password":     "d2_user_admin123",
-        "groups":       ["d2:admin"],
-        "client_roles": {"d2-client": ["can-login"]},
+        "username":     "pl_user_admin",
+        "password":     "pl_user_admin123",
+        "groups":       ["pl:admin"],
+        "realm_roles":  ["auth_loginform", "access_policies_can_login"],
     },
     {
-        "username":     "d2_transcriptor",
-        "password":     "d2_transcriptor123",
-        "groups":       ["d2:editor"],
-        "client_roles": {"d2-client": ["auth_autologin", "can-login"]},
+        "username":     "pl_transcriptor",
+        "password":     "pl_transcriptor123",
+        "groups":       ["pl:editor"],
+        "realm_roles":  ["auth_autologin", "access_policies_can_login"],
     },
 ]
 
@@ -161,6 +155,35 @@ def assign_groups(session, user_id, groups):
             print(f"    [ERROR] grupo '{group_name}': {resp.status_code} {resp.text}")
 
 
+def assign_realm_roles(session, user_id, role_names):
+    """Asigna roles de realm al usuario."""
+    if not role_names:
+        return
+    base = f"{KEYCLOAK_URL}/admin/realms/{REALM}"
+
+    roles_to_assign = []
+    for role_name in role_names:
+        resp = session.get(f"{base}/roles/{role_name}")
+        if resp.status_code == 200:
+            role = resp.json()
+            roles_to_assign.append({"id": role["id"], "name": role["name"]})
+        else:
+            print(f"    [WARN] rol de realm '{role_name}' no existe — ignorado")
+
+    if not roles_to_assign:
+        return
+
+    resp = session.post(
+        f"{base}/users/{user_id}/role-mappings/realm",
+        json=roles_to_assign,
+    )
+    if resp.status_code == 204:
+        names = ", ".join(r["name"] for r in roles_to_assign)
+        print(f"    → roles de realm [{names}] asignados")
+    else:
+        print(f"    [ERROR] roles de realm: {resp.status_code} {resp.text}")
+
+
 def assign_client_roles(session, user_id, client_roles):
     """Asigna roles de cliente al usuario."""
     base = f"{KEYCLOAK_URL}/admin/realms/{REALM}"
@@ -193,7 +216,7 @@ def assign_client_roles(session, user_id, client_roles):
             print(f"    [ERROR] roles en '{client_id_str}': {resp.status_code} {resp.text}")
 
 
-def process_user(session, username, password, groups, client_roles):
+def process_user(session, username, password, groups, client_roles, realm_roles=None):
     base = f"{KEYCLOAK_URL}/admin/realms/{REALM}"
 
     # ¿Existe ya?
@@ -232,6 +255,7 @@ def process_user(session, username, password, groups, client_roles):
         print(f"  [creado] {username}")
 
     assign_groups(session, user_id, groups)
+    assign_realm_roles(session, user_id, realm_roles or [])
     assign_client_roles(session, user_id, client_roles)
 
 
@@ -261,6 +285,7 @@ def main():
                 user["password"],
                 user.get("groups", []),
                 user.get("client_roles", {}),
+                user.get("realm_roles", []),
             )
         except Exception as e:
             print(f"  [ERROR inesperado] {e}  →  continuando con el siguiente")
