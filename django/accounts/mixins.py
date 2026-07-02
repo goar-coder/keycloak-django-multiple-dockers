@@ -1,15 +1,31 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+import logging
+
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
+from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import redirect
+from django.urls import reverse
+
+logger = logging.getLogger('accounts')
 
 
-class ScopeRequiredMixin(LoginRequiredMixin):
-    required_scope = None
+class GroupRequiredMixin(AccessMixin):
+    allowed_groups: list[str] = []
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
-        if self.required_scope:
-            user_scopes = request.session.get('oidc_scopes', [])
-            if self.required_scope not in user_scopes:
-                return redirect(f'/denied/?required={self.required_scope}')
+
+        if not self.allowed_groups:
+            raise ImproperlyConfigured(
+                f"{self.__class__.__name__} debe definir 'allowed_groups'."
+            )
+
+        if not request.user.groups.filter(name__in=self.allowed_groups).exists():
+            required = ','.join(self.allowed_groups)
+            logger.info(
+                'action=group_denied user=%s required=%s',
+                request.user.username, required,
+            )
+            return redirect(f"{reverse('group-access-denied')}?required={required}")
+
         return super().dispatch(request, *args, **kwargs)

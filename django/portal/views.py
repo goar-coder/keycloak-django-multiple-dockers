@@ -1,8 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
-from accounts.decorators import require_groups
+from accounts.mixins import GroupRequiredMixin
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -24,21 +23,21 @@ class GroupAccessDeniedView(LoginRequiredMixin, TemplateView):
         return ctx
 
 
-@method_decorator(require_groups(['pl:report']), name='dispatch')
-class ReportsView(LoginRequiredMixin, TemplateView):
+class ReportsView(GroupRequiredMixin, TemplateView):
     template_name = 'portal/reports.html'
+    allowed_groups = ['pl:report']
 
 
-@method_decorator(require_groups(['pl:data', 'pl:admin', 'admin:data']), name='dispatch')
-class DataView(LoginRequiredMixin, TemplateView):
+class DataView(GroupRequiredMixin, TemplateView):
     template_name = 'portal/data.html'
+    allowed_groups = ['pl:data', 'pl:admin', 'admin:data']
 
 
-@method_decorator(require_groups(['pl:editor', 'pl:admin']), name='dispatch')
-class EditorView(LoginRequiredMixin, TemplateView):
+class EditorView(GroupRequiredMixin, TemplateView):
     template_name = 'portal/editor.html'
+    allowed_groups = ['pl:editor', 'pl:admin']
 
 
-@method_decorator(require_groups(['pl:admin']), name='dispatch')
-class PoliciesAdminView(LoginRequiredMixin, TemplateView):
+class PoliciesAdminView(GroupRequiredMixin, TemplateView):
     template_name = 'portal/admin_section.html'
+    allowed_groups = ['pl:admin']
